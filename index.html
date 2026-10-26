@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>CyberPC 3D - 旗舰主机逐层拆解与全息交互</title>
+  <meta name="description" content="深色科技霓虹风格3D台式电脑主机，支持滚轮逐层拆解重组、ARGB动态光效、全息标注与硬件规格下钻检视。" />
+  
+  <!-- OpenGraph & Twitter Cards -->
+  <meta property="og:title" content="CyberPC 3D - 旗舰主机逐层拆解与全息交互" />
+  <meta property="og:description" content="深色科技霓虹风格3D台式电脑主机，支持滚轮逐层拆解重组、ARGB动态光效、全息标注与硬件规格下钻检视。" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="CyberPC 3D - 旗舰主机逐层拆解与全息交互" />
+  <meta name="twitter:description" content="深色科技霓虹风格3D台式电脑主机，支持滚轮逐层拆解重组、ARGB动态光效、全息标注与硬件规格下钻检视。" />
+
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <!-- 3D WebGL Canvas Container -->
+  <div id="canvas-container"></div>
+
+  <!-- Top-Left Branding HUD -->
+  <header class="hud-top-left">
+    <div class="hud-badge-group">
+      <span class="hud-badge">FLAGSHIP TOWER // 3D EXPLODED</span>
+      <span class="hud-subbadge">SYSTEM REV 3.0</span>
+    </div>
+    <h1 class="hud-title">
+      CyberPC <span class="gradient-text">TITAN</span>
+    </h1>
+    <div class="hud-status-row">
+      <div id="power-dot" class="status-dot"></div>
+      <span id="status-desc" class="status-text">整机组装完成 [ READY TO EXPLODE ]</span>
+    </div>
+  </header>
+
+  <!-- Top-Right Instructions & Hover Chip -->
+  <aside class="hud-top-right">
+    <div class="instruction-chip">
+      <span class="chip-icon">◈</span>
+      <span class="desktop-tip">滚轮向下逐层拆解 / 向上重组 • 点击零件下钻</span>
+      <span class="mobile-tip">上下滑动拆解 • 轻触零件下钻</span>
+    </div>
+    <div id="hover-chip" class="hover-chip hidden">
+      <span class="chip-icon text-cyan">👁</span>
+      <span id="hover-text">点击检视部件</span>
+    </div>
+  </aside>
+
+  <!-- Mobile-Friendly Vertical Gesture Scrub Track (Right Edge) -->
+  <div id="scrub-track" class="scrub-track" title="上下滑动控制拆解重组">
+    <div class="scrub-track-icon">↕</div>
+    <div class="scrub-bar-bg">
+      <div id="scrub-bar-fill" class="scrub-bar-fill"></div>
+    </div>
+    <span id="scrub-percentage" class="scrub-percentage">0%</span>
+  </div>
+
+  <!-- 3D Holographic Callout Anchor Chips Container -->
+  <div id="hologram-container" class="hologram-container"></div>
+
+  <!-- Hardware Inspector Drawer / Bottom Sheet -->
+  <section id="inspector-panel" class="inspector-panel closed">
+    <!-- Mobile top drag indicator -->
+    <div class="mobile-drag-bar">
+      <button id="btn-close-sheet" class="drag-pill" aria-label="关闭详情面板"></button>
+    </div>
+
+    <!-- Inspector Header -->
+    <div class="inspector-header">
+      <div class="inspector-category">
+        <span class="dot-cyan"></span>
+        <span id="part-category-tag">HARDWARE INSPECTOR</span>
+      </div>
+      <button id="btn-close-inspector" class="btn-close" aria-label="关闭详情">✕</button>
+    </div>
+
+    <!-- Inspector Body -->
+    <div class="inspector-body">
+      <!-- Title & Summary -->
+      <div class="part-header-info">
+        <div id="part-brand-model" class="part-brand-model">ASUS ROG • MAXIMUS Z790</div>
+        <h2 id="part-title" class="part-title">玩家国度主板 PCB 装甲</h2>
+        <p id="part-brief" class="part-brief">20+1+2 级联供电模组，PCIe 5.0 与 5 组 M.2 装甲。</p>
+      </div>
+
+      <!-- Live Telemetry Card -->
+      <div class="telemetry-card">
+        <div class="telemetry-tag">LIVE TELEMETRY</div>
+        <div class="telemetry-grid">
+          <!-- Temp -->
+          <div class="gauge-box">
+            <div class="gauge-header">
+              <span>核心温控</span>
+              <span id="telemetry-temp" class="text-cyan">38 ℃</span>
+            </div>
+            <div class="gauge-bar-bg">
+              <div id="gauge-temp-fill" class="gauge-temp-fill"></div>
+            </div>
+          </div>
+          <!-- Power -->
+          <div class="gauge-box">
+            <div class="gauge-header">
+              <span>瞬时功耗</span>
+              <span id="telemetry-power" class="text-magenta">285 W</span>
+            </div>
+            <div class="gauge-bar-bg">
+              <div id="gauge-power-fill" class="gauge-power-fill"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="telemetry-row">
+          <div class="metric-box">
+            <span id="telemetry-clock-label" class="metric-label">瞬时主频</span>
+            <span id="telemetry-clock-val" class="metric-val text-white">6.2 GHz</span>
+          </div>
+          <div class="metric-box">
+            <span id="telemetry-custom-label" class="metric-label">风道气流速</span>
+            <span id="telemetry-custom-val" class="metric-val text-cyan">185 CFM</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hardware Specs Table -->
+      <div class="specs-section">
+        <div class="section-title">
+          <span class="section-icon">⚙</span>
+          <span>旗舰硬件技术规格</span>
+        </div>
+        <div id="specs-table" class="specs-table">
+          <!-- Injected via JavaScript -->
+        </div>
+      </div>
+
+      <!-- Architectural Highlights -->
+      <div class="features-section">
+        <div class="section-title">
+          <span class="section-icon text-magenta">★</span>
+          <span>极客架构亮点</span>
+        </div>
+        <ul id="features-list" class="features-list">
+          <!-- Injected via JavaScript -->
+        </ul>
+      </div>
+    </div>
+
+    <!-- Inspector Navigation Footer -->
+    <div class="inspector-footer">
+      <button id="btn-prev-part" class="btn-nav">‹ 上一个</button>
+      <button id="btn-exit-drill" class="btn-return">返回整机</button>
+      <button id="btn-next-part" class="btn-nav">下一个 ›</button>
+    </div>
+  </section>
+
+  <!-- Collapsible Bottom Control Dock -->
+  <nav id="control-dock" class="control-dock">
+    <!-- Collapse Toggle Tab -->
+    <div class="dock-toggle-row">
+      <button id="btn-toggle-dock" class="btn-dock-toggle">
+        <span id="dock-toggle-icon">▾</span>
+        <span id="dock-toggle-text">收起控制面板 (全景模式)</span>
+      </button>
+    </div>
+
+    <!-- Main Dock Box -->
+    <div id="dock-content" class="dock-content">
+      <!-- Top Scrubber Row -->
+      <div class="dock-scrubber-group">
+        <div class="scrubber-header">
+          <div class="stage-indicator">
+            <span class="stage-dot"></span>
+            <span id="stage-label">01 // 完整整机</span>
+          </div>
+          <div class="progress-display">
+            滚动进度: <span id="progress-text" class="text-cyan">0%</span>
+          </div>
+        </div>
+
+        <input
+          type="range"
+          id="timeline-slider"
+          class="timeline-slider"
+          min="0"
+          max="1"
+          step="0.005"
+          value="0"
+          aria-label="拆解进度滑块"
+        />
+
+        <div class="quick-jump-row">
+          <button id="jump-assembled" class="btn-jump active" data-progress="0">1. 初始整机 (0%)</button>
+          <button id="jump-exploded" class="btn-jump" data-progress="0.68">2. 逐层拆解 (68%)</button>
+          <button id="jump-powered" class="btn-jump" data-progress="1.0">3. 重组上电 (100%)</button>
+        </div>
+      </div>
+
+      <!-- Bottom Toolbar Row -->
+      <div class="dock-toolbar">
+        <!-- Playback / Rotate / Reset -->
+        <div class="toolbar-actions">
+          <button id="btn-play" class="btn-tool">
+            <span id="play-icon">▶</span>
+            <span id="play-text">巡航</span>
+          </button>
+          <button id="btn-rotate" class="btn-tool">
+            <span>⟳</span>
+            <span class="hide-mobile">自转</span>
+          </button>
+          <button id="btn-reset" class="btn-tool">
+            <span>⌂</span>
+            <span>复位</span>
+          </button>
+        </div>
+
+        <!-- Light Color Themes -->
+        <div class="toolbar-themes">
+          <span class="theme-label hide-mobile">光效:</span>
+          <button class="theme-swatch active theme-cyber" data-theme="cyber" title="赛博青紫"></button>
+          <button class="theme-swatch theme-matrix" data-theme="matrix" title="黑客矩阵"></button>
+          <button class="theme-swatch theme-amber" data-theme="amber" title="炙热烈焰"></button>
+          <button class="theme-swatch theme-stealth" data-theme="stealth" title="暗夜潜行"></button>
+        </div>
+
+        <!-- Fan Strategy Modes -->
+        <div class="toolbar-fans">
+          <button class="btn-fan" data-fan="silent">静音</button>
+          <button class="btn-fan active" data-fan="balanced">均衡</button>
+          <button class="btn-fan" data-fan="turbo">极速</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main JavaScript Entrypoint -->
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

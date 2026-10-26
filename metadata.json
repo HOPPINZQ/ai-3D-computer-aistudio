@@ -1,0 +1,6 @@
+{
+  "name": "CyberPC 3D - 旗舰主机逐层拆解与全息交互",
+  "description": "深色科技霓虹风格3D台式电脑主机，支持滚轮逐层拆解重组、ARGB动态光效、全息标注与硬件规格下钻检视。",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
